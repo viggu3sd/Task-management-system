@@ -1,12 +1,14 @@
+from argparse import Action
 from django.shortcuts import render
 
+from flask import Response
 from rest_framework import viewsets, permissions
 from .models import Task
 from .serializers import TaskSerializer # type: ignore
 from rest_framework import filters
 from django.core.cache import cache
 
-scheduler = TaskScheduler()
+scheduler = TaskScheduler() # type: ignore
 
 class TaskViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
@@ -15,7 +17,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         scheduler.add_task(task)
         return response
 
-    @action(detail=False, methods=['get'])
+    @Action(detail=False, methods=['get'])
     def next_task(self, request):
         next_task = scheduler.get_next_task()
         if not next_task:
